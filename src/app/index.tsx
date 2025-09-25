@@ -11,7 +11,9 @@ export default function Index() {
       }}
     >
       <Text className="text-xl font-bold text-red-500">Edit app/index.tsx to edit this screen.</Text>
-      <Link href="/details" className="text-blue-600">Go to Details</Link>
+      <Link href="/details">
+        <Text className="text-cyan-500">Go to Details</Text>
+      </Link>
     </View>
   );
 }
