@@ -11,11 +11,6 @@ export default function RootLayout() {
           <Ionicons name="home" size={size} color={color} />
         ),
       }} />
-      <Tabs.Screen name="details" options={{
-        title: "Details", tabBarIcon: ({ color, size }) => (
-          <Ionicons name="list" size={size} color={color} />
-        ),
-      }} />
     </Tabs>
   );
 }
