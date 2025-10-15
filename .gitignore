@@ -43,5 +43,5 @@ app-example
 /android
 
 app.json
-
+.idea
 .env
