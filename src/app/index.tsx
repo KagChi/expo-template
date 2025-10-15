@@ -1,15 +1,24 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert, ScrollView } from "react-native";
+import React from "react";
+import { View, Text, TextInput, Alert, ScrollView, TouchableOpacity } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { useForm, Controller } from "react-hook-form";
 
 export default function Index() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [institution, setInstitution] = useState("");
-  const [participantType, setParticipantType] = useState("");
-  const [selectedTopic, setSelectedTopic] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = useForm({
+    defaultValues: {
+      fullName: "",
+      email: "",
+      phone: "",
+      institution: "",
+      participantType: "",
+      selectedTopic: "",
+    },
+  });
 
   const participantTypes = [
     { label: "Pilih Tipe Peserta...", value: "" },
@@ -24,12 +33,19 @@ export default function Index() {
     { label: "Keamanan Siber", value: "Keamanan Siber" },
   ];
 
-  const handleSubmit = async () => {
+  const onSubmit = async (data: {
+    fullName: string;
+    email: string;
+    phone: string;
+    institution: string;
+    participantType: string;
+    selectedTopic: string;
+  }) => {
+    const { fullName, email, phone, institution, participantType, selectedTopic } = data;
     if (!fullName || !email || !phone || !institution || !participantType || !selectedTopic) {
       Alert.alert("Please fill in all fields.");
       return;
     }
-    setSubmitting(true);
     const formData = new FormData();
     formData.append("entry.59791515", fullName);
     formData.append("entry.739327528", email);
@@ -48,128 +64,131 @@ export default function Index() {
       );
       if (response.ok || response.status === 0) {
         Alert.alert("Submitted!", "Your response has been recorded.");
-        setFullName("");
-        setEmail("");
-        setPhone("");
-        setInstitution("");
-        setParticipantType("");
-        setSelectedTopic("");
+        reset();
       } else {
         Alert.alert("Submission failed", "Please try again later.");
       }
     } catch {
       Alert.alert("Error", "An error occurred. Please try again.");
-    } finally {
-      setSubmitting(false);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", alignItems: "center", padding: 24 }}>
-      <View style={{ width: "100%", maxWidth: 400 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 16, textAlign: "center" }}>
-          Registration Form
-        </Text>
-        <TextInput
-          placeholder="Full Name"
-          value={fullName}
-          onChangeText={setFullName}
-          style={{
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 8,
-            padding: 12,
-            marginBottom: 12,
-            backgroundColor: "#fff",
-          }}
-        />
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          style={{
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 8,
-            padding: 12,
-            marginBottom: 12,
-            backgroundColor: "#fff",
-          }}
-        />
-        <TextInput
-          placeholder="Phone"
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-          style={{
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 8,
-            padding: 12,
-            marginBottom: 12,
-            backgroundColor: "#fff",
-          }}
-        />
-        <TextInput
-          placeholder="Institution"
-          value={institution}
-          onChangeText={setInstitution}
-          style={{
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 8,
-            padding: 12,
-            marginBottom: 12,
-            backgroundColor: "#fff",
-          }}
-        />
-        <Text style={{ marginBottom: 8, fontWeight: "500" }}>Participant Type</Text>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 8,
-            marginBottom: 12,
-            backgroundColor: "#fff",
-            overflow: "hidden",
-          }}
-        >
-          <Picker
-            selectedValue={participantType}
-            onValueChange={(itemValue) => setParticipantType(itemValue)}
-            style={{ height: 48, width: "100%" }}
-            dropdownIconColor="#000"
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View className="flex-1 justify-center items-center p-6">
+        <View className="w-full max-w-[400px]">
+          <Text className="text-2xl font-bold mb-4 text-center">
+            Registration Form
+          </Text>
+          <Controller
+            control={control}
+            name="fullName"
+            rules={{ required: true }}
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                placeholder="Full Name"
+                value={value}
+                onChangeText={onChange}
+                className="border border-gray-300 rounded-lg px-3 py-3 mb-3 bg-white"
+                placeholderTextColor="#9ca3af"
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="email"
+            rules={{ required: true }}
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                placeholder="Email"
+                value={value}
+                onChangeText={onChange}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                className="border border-gray-300 rounded-lg px-3 py-3 mb-3 bg-white"
+                placeholderTextColor="#9ca3af"
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="phone"
+            rules={{ required: true }}
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                placeholder="Phone"
+                value={value}
+                onChangeText={onChange}
+                keyboardType="phone-pad"
+                className="border border-gray-300 rounded-lg px-3 py-3 mb-3 bg-white"
+                placeholderTextColor="#9ca3af"
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="institution"
+            rules={{ required: true }}
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                placeholder="Institution"
+                value={value}
+                onChangeText={onChange}
+                className="border border-gray-300 rounded-lg px-3 py-3 mb-3 bg-white"
+                placeholderTextColor="#9ca3af"
+              />
+            )}
+          />
+          <Text className="mb-2 font-medium">Participant Type</Text>
+          <Controller
+            control={control}
+            name="participantType"
+            rules={{ required: true }}
+            render={({ field: { onChange, value } }) => (
+              <View className="border border-gray-300 rounded-lg mb-3 bg-white overflow-hidden">
+                <Picker
+                  selectedValue={value}
+                  onValueChange={onChange}
+                  style={{ height: 48, width: "100%" }}
+                  dropdownIconColor="#000"
+                >
+                  {participantTypes.map((type) => (
+                    <Picker.Item key={type.value} label={type.label} value={type.value} />
+                  ))}
+                </Picker>
+              </View>
+            )}
+          />
+          <Text className="mb-2 font-medium">Topik</Text>
+          <Controller
+            control={control}
+            name="selectedTopic"
+            rules={{ required: true }}
+            render={({ field: { onChange, value } }) => (
+              <View className="border border-gray-300 rounded-lg mb-5 bg-white overflow-hidden">
+                <Picker
+                  selectedValue={value}
+                  onValueChange={onChange}
+                  style={{ height: 48, width: "100%" }}
+                  dropdownIconColor="#000"
+                >
+                  {topics.map((topic) => (
+                    <Picker.Item key={topic.value} label={topic.label} value={topic.value} />
+                  ))}
+                </Picker>
+              </View>
+            )}
+          />
+          <TouchableOpacity
+            onPress={handleSubmit(onSubmit)}
+            disabled={isSubmitting}
+            className={`bg-blue-600 rounded-lg px-4 py-3 ${isSubmitting ? "opacity-60" : ""}`}
           >
-            {participantTypes.map((type) => (
-              <Picker.Item key={type.value} label={type.label} value={type.value} />
-            ))}
-          </Picker>
+            <Text className="text-white text-base text-center font-semibold">
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </Text>
+          </TouchableOpacity>
         </View>
-        <Text style={{ marginBottom: 8, fontWeight: "500" }}>Topik</Text>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 8,
-            marginBottom: 20,
-            backgroundColor: "#fff",
-            overflow: "hidden",
-          }}
-        >
-          <Picker
-            selectedValue={selectedTopic}
-            onValueChange={(itemValue) => setSelectedTopic(itemValue)}
-            style={{ height: 48, width: "100%" }}
-            dropdownIconColor="#000"
-          >
-            {topics.map((topic) => (
-              <Picker.Item key={topic.value} label={topic.label} value={topic.value} />
-            ))}
-          </Picker>
-        </View>
-        <Button title={submitting ? "Submitting..." : "Submit"} onPress={handleSubmit} disabled={submitting} />
       </View>
     </ScrollView>
   );
